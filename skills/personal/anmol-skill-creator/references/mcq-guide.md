@@ -2,6 +2,10 @@
 
 This reference document provides archetype libraries, heuristics, and templates for generating high-quality MCQs and example candidates during skill creation. Read this when you need inspiration for the Clarifying Questions or Example Selection stages.
 
+## Contents
+- Part 1: MCQ Generation (scope archetypes, behavioural archetypes, heuristics)
+- Part 2: Example Selection (good and bad archetype libraries, task-category defaults, candidate heuristics, what to do with selections)
+
 ---
 
 ## Part 1: MCQ Generation

@@ -2,6 +2,16 @@
 
 This document defines the JSON schemas used by skill-creator.
 
+## Contents
+- evals.json: test prompts and assertions
+- history.json: version progression across iterations
+- grading.json: grader output (text / passed / evidence)
+- metrics.json: per-run tool and output metrics
+- timing.json: tokens and duration per run
+- benchmark.json: aggregated stats the viewer reads
+- comparison.json: blind comparator output
+- analysis.json: post-hoc analyzer output
+
 ---
 
 ## evals.json
