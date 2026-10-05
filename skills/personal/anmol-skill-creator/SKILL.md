@@ -134,7 +134,7 @@ Before drafting, decide the skill's file structure. Ask these questions:
 Claude reads only the relevant reference file at runtime, keeping context lean.
 
 **2. Are there deterministic, repeatable steps that a script would handle more reliably than instructions?** (file format conversion, template population, data validation, build steps)
-→ Yes: plan a `scripts/` directory. Write the script; tell the SKILL.md to call it.
+→ Yes: plan a `scripts/` directory. Write the script; tell the SKILL.md to call it. Scripts must solve, not defer: handle the expected errors (missing file, bad input) themselves, not crash and leave Claude to improvise. Every constant gets a comment justifying its value (`TIMEOUT = 30  # most requests finish well inside 30s`). If you can't justify a number, Claude can't either.
 
 **3. Does the skill need distinct review, grading, or critique passes that benefit from a separate persona?**
 → Yes: plan an `agents/` directory with focused subagent instructions.
@@ -193,6 +193,8 @@ Deps: python-docx (pip), Notion:notion-create-pages
 Proactively ask questions about edge cases, input/output formats, example files, success criteria, and dependencies. Wait to write test prompts until you've got this part ironed out.
 
 Keep the interview efficient: aim for at most 2 rounds of questions beyond the MCQs before drafting. If the user seems eager to move forward, proceed with your best assumptions and label them. You can always revise after the first test run — a draft with labelled assumptions is more useful than a perfect spec that took many rounds to extract.
+
+**Gap-first (when feasible):** before drafting, run 1–2 representative tasks with no skill and note exactly what Claude gets wrong or has to be told. Write only enough instruction to close those gaps. Skills written this way stay lean because they fix real failures rather than imagined ones.
 
 Check available MCPs - if useful for research (searching docs, finding similar skills, looking up best practices), research in parallel via subagents if available, otherwise inline. Come prepared with context to reduce burden on the user.
 
@@ -352,7 +354,7 @@ Present the self-check scores to the user briefly — they don't need a long exp
 
 ### Test Cases
 
-After writing the skill draft (and passing the self-check), come up with 2-3 realistic test prompts — the kind of thing a real user would actually say. Share them with the user: [you don't have to use this exact language] "Here are a few test cases I'd like to try. Do these look right, or do you want to add more?" Then run them.
+After writing the skill draft (and passing the self-check), come up with at least 3 realistic test prompts — the kind of thing a real user would actually say. Share them with the user: [you don't have to use this exact language] "Here are a few test cases I'd like to try. Do these look right, or do you want to add more?" Then run them.
 
 Save test cases to `evals/evals.json`. Don't write assertions yet — just the prompts. You'll draft assertions in the next step while the runs are in progress.
 
@@ -406,6 +408,8 @@ This is the heart of the loop. You've run the test cases, the user has reviewed 
 5. **Show your reasoning.** When presenting a revised skill, include 3–5 bullets explaining what you changed and why. Something like: "Feedback on eval-2 said the chart was missing axis labels → added explicit axis-labelling instruction in the output format section. Chose to make it a general instruction rather than chart-specific to avoid overfitting to this one test case." This helps the user understand your trade-offs and course-correct early if you've misread the feedback.
 
 6. **Re-check against the selected examples.** Revisit the good/bad examples the user selected during Example Selection. If your revision is drifting away from what the user picked as "good" — or toward what they picked as "bad" — that's a signal you've misread the feedback. The selected examples are your north star for output taste.
+
+7. **Watch how Claude navigates the skill.** In the transcripts, check which files it opened and in what order. A bundled file it never opened is either unnecessary or not signposted well enough. A reference it opens every run belongs in SKILL.md. Reading files in an order you didn't expect means the structure isn't clear enough.
 
 This task is pretty important (we are trying to create billions a year in economic value here!) and your thinking time is not the blocker; take your time and really mull things over. I'd suggest writing a draft revision and then looking at it anew and making improvements. Really do your best to get into the head of the user and understand what they want and need.
 
