@@ -4,6 +4,16 @@
 
 ---
 
+## Contents
+
+- Phase 0: Home
+- Phase 1: Grill the idea
+- Phase 2: Brief
+- Phase 3: Route
+- Phase 4: Build questions
+- Phase 5: Pipeline
+- Phase 6: Ship
+
 ## Phase 0: Home
 
 1. **Pick a slug** from the request: lowercase and hyphenated, for example `loxa-dusk-post-purchase`. Run `engine/new-video.sh <slug>`. If the slug already exists, ask whether to resume (`--resume`) or use a new slug.
@@ -20,6 +30,9 @@
        - a baseline score on the 7 critique axes (annex section C).
    - **A product URL.** Use Playwright to capture real screenshots, the logo, colours and fonts into `V/assets/`. List what you found.
    - **A deck, PDF or notes.** Extract the facts and the copy into `V/docs/source-notes.md`.
+   - **A voice recording or a talking-head take** (an explainer to sync). Copy it into `V/assets/source/` and
+     transcribe it now: `engine/py SK/scripts/transcribe_words.py V/assets/source/<take> --out V/sync`. The words
+     are the raw material for every recommendation that follows; read the low-confidence words it prints.
    - **A brand.** Read `brands/<brand>/brand.md`. If the brand has no kit, the kit becomes a gap to fill in Phase 1.
 3. **Read `index.md`.** Earlier videos for the same brand set the house look. Recommend continuity unless the user says otherwise.
 4. **For a recreation, find the original build first.** Grep the working folders for a unique on-screen string from the source, such as an order number, a URL or a price: `grep -rl "<string>" ~/Desktop/WORK ~/Downloads`. The original package usually holds:
@@ -49,12 +62,12 @@ The goal is the complete Idea Brief (annex section A). The method is the house f
   - the story shape.
 - **Round 2, the look and the material:**
   - the hook in the first 2 seconds;
-  - the look or reference;
+  - the look or reference (for boards with no brand kit, this is the style step in `references/explainer/tokens-default.md`: 3 directions plus the default);
   - which real assets to use;
   - the CTA or end card.
 - **Round 3, sound and delivery,** only for whatever is still open:
   - music feel and BPM;
-  - voice on or off;
+  - voice on or off, and for boards the sync mode: words only, voice sync, or voice + words (`references/explainer/word-sync.md`);
   - where it ships and in which extra formats;
   - constraints such as a deadline, must-say lines or must-avoid lines.
 - **Skip what is already settled.** Never re-ask something the request, the source or an earlier round already answered. Fold it into the brief as a stated assumption instead.
@@ -81,7 +94,7 @@ The annex section B question banks give worked examples per video type. Adapt th
 
 ## Phase 3: Route
 
-1. Walk the "How the motion-studio skill picks" questions in `knowledge/framework-decision-matrix.md` against the brief. The first decisive answer wins.
+1. Check route E first: read `references/explainer/route-e.md` ("When route E wins"). If the film's job is to make an idea understood and most shots are diagrams, charts, numbers, lists or comparisons, route E wins (or joins a mixed route). Otherwise walk the "How the motion-studio skill picks" questions in `knowledge/framework-decision-matrix.md` against the brief. The first decisive answer wins.
 2. Write the route, the reason, and the bootstrap commands into `V/brief.md` under "Route decision (and why)".
 3. Prefer routes marked "built in studio" or "smoke-tested". A "documented" route is installed now, inside `V/`, never globally, at the pinned version. A "not wired" route (mixed video-model) needs the user's budget and keys first: ask.
 4. **Mixed routes are normal.** For example: footage edit (D) with route-A animated inserts; Manim shots inside a route-A branded film.
@@ -125,7 +138,17 @@ Skip this round when nothing is open.
    - **Seed the blinks.**
    - **A new mascot is a brand decision.** Flag it for sign-off.
 
+### 4c: Sync mode (route E, or any film with boards)
+
+Settle the sync mode if round 3 left it open, with one 4-option question: voice sync from your own recording
+(Recommended for YouTube), voice + kinetic words, words only at reading pace (Recommended for proposals and
+silent social), generated voice then sync. Voice modes need the final take before E5; generated voice runs 4b first.
+
 ## Phase 5: Pipeline
+
+**Route E** runs steps E1-E8 in `references/explainer/route-e.md` in place of steps 2, 4, 5, 6 and 8 below. Step 3
+(beat grid) still applies to words-only films with music, and steps 7 (critique, plus the Sync axis), 9 to 11 (sound,
+mix, QA) apply unchanged.
 
 Route A is shown here. Other routes keep the same gates, the same audio and the same QA, and swap only the render step.
 
@@ -214,4 +237,6 @@ Route A is shown here. Other routes keep the same gates, the same audio and the 
 4. **Open it:** `open "V/out/final.mp4"` (and `before-after.png` for a recreation).
 5. **Get the verdict** with one `AskUserQuestion`: "Ship it (Recommended)", "Fix motion", "Fix copy or facts", "Fix sound". Anything other than ship loops back to the critique loop with the user's note as round N+1's first problem.
 6. **Write the report** in the shape set out in `SKILL.md` Output.
-7. **Formats beyond the first** come from the same timeline. Re-render with `layout('9:16')` and the other formats, and reframe rather than crop.
+7. **Route E extras:** YouTube chapters from the chapter boards' start times, the end board holding 20 s or more,
+   a thumbnail from the strongest board; for proposals, the source list for every number. See route-e.md E8.
+8. **Formats beyond the first** come from the same timeline. Re-render with `layout('9:16')` and the other formats, and reframe rather than crop.

@@ -1,6 +1,7 @@
 # motion-studio: annex
 
-Sections:
+## Contents
+
 
 - **A.** Idea Brief checklist
 - **B.** Question banks
@@ -38,6 +39,8 @@ The grill rounds end when every line has an answer or a stated assumption. Each 
    - voice on or off, with provider and script owner. *(R3)*
 10. **Delivery:** where it ships (deck, LinkedIn, X, site, email), the deadline, and who sees it first. *(R3)*
 11. **Constraints:** budget for paid APIs, legal or brand restrictions, competitor names to avoid. *(R3)*
+12. **Boards (route E):** camera on or off, the sync mode (words only, voice sync, voice + words), where the voice
+    comes from (your recording, an editor export, generated), and the anchor picture if the film has one. *(R3, 4c)*
 
 ---
 
@@ -170,6 +173,42 @@ Every option needs a `description` saying what the video becomes and what it cos
   - Loop: yes or no.
   - Channel.
 
+### B5. YouTube explainer (talking head or narrated; route E)
+
+- **Round 1:**
+  - The one idea the viewer can retell: proposed from the transcript **(R)**, supplied by you, the video title's promise, two candidates to pick from.
+  - Who is watching: smart beginner **(R)**, practitioner, decision-maker, mixed.
+  - Camera: talking head bottom-right **(R)**, narrated with no face, face only in hook and outro, screen recording plus boards.
+  - Length: the final cut's length **(R)**, a tighter cut first, a 60 s Short from the same plan, both.
+- **Round 2:**
+  - The anchor picture: the one the transcript keeps returning to **(R)**, a timeline, a map, none.
+  - Board density: the budget in `brief-method.md` **(R)**, denser (a board every 15 s), lighter (key moments only), boards only where numbers appear.
+  - Look: the brand kit themed onto the boards **(R)**, the style step with 3 directions, a named reference, the default theme (warn: template look).
+  - Honesty tags: on where the script hedges **(R)**, off, EXAMPLE only, ask per board.
+- **Round 3:**
+  - Sync: voice sync from your final take **(R)**, voice + kinetic words, words only, generated voice then sync.
+  - Sound: voice only **(R)**, voice with a ducked bed, voice with sparse SFX on stamps, both.
+  - Extras: chapters + end screen + thumbnail **(R)**, chapters only, plus a Short, none.
+  - Delivery: one master with the camera composited **(R)**, board track for the editor, both, board clips per board.
+
+### B6. Proposal, pitch or results film (no presenter; route E)
+
+- **Round 1:**
+  - Who decides after watching: the client's buyer **(R)**, an internal approver, investors, the team.
+  - The one action at the end: reply yes to the proposal **(R)**, book a call, approve budget, share it on.
+  - Length: 45-60 s **(R)**, 30 s, 90 s, a 15 s teaser plus the full film.
+  - Format: 16:9 for the deck or call **(R)**, 1:1 for email and LinkedIn, 9:16, all from one plan.
+- **Round 2:**
+  - Story shape: problem, plan, proof, ask **(R)**, before vs after, three numbers, the plan as a timeline.
+  - The proof number, with its source: from the doc **(R)**, from the user, from a past result, none (cut proof).
+  - Look: the client's or the user's brand kit **(R)**, co-branded, the style step, a named reference.
+  - End card: the ask with a date **(R)**, the logo lockup, a contact, a loop to the opening.
+- **Round 3:**
+  - Timing: words only at reading pace **(R)**, a voiceover with sync, voice + words, generated voice.
+  - Music: synthesized, calm, 100-110 BPM with cuts on downbeats **(R)**, energetic, supplied, none.
+  - Where it plays: in a live call **(R)** (no captions needed), sent cold by email (on-screen copy carries it), LinkedIn, the website.
+  - Must not appear: the client's competitors **(R)**, prices, other clients' names, none.
+
 ---
 
 ## C. Critique rubric (score 1 to 10 each, every round)
@@ -183,6 +222,7 @@ Every option needs a `description` saying what the video becomes and what it cos
 | Composition | Clear focal point, intentional negative space, safe margins | Centered everything, crowding, corner labels |
 | Brand accuracy | Real logo, real fonts, palette from the kit, one accent, voice rules kept | Fallback fonts, an off-palette accent, a typed logo |
 | Sound sync | Scene changes on downbeats, SFX on actions (onsets within 1 frame) | Hits drifting off picture, SFX at t=0, cues masked |
+| Sync (route E and any word-synced film) | Every element lands 0.05-2 s after the word that names it, never before; no stretch over 5 s with nothing new while the voice talks; text up for its read time | A title that gives away the punchline, everything at t=0, labels leaving before they can be read, a misheard anchor landing nothing |
 
 For a recreation, score the source on the same axes first (the baseline) and report both.
 
@@ -213,6 +253,7 @@ Rules for the shot list:
 
 | Round | Hook | Read@360 | Motion | Variety | Composition | Brand | Sound | Render |
 |---|---|---|---|---|---|---|---|---|
+<!-- Synced films add a Sync column after Sound. -->
 | baseline (source) | 5 | 6 | 3 | 4 | 6 | 7 | 4 | source mp4 |
 | 1 | 6 | 7 | 6 | 6 | 7 | 8 | n/a | draft 30fps sub1 |
 
@@ -245,6 +286,13 @@ Fixes: ...
 | A supplied music track from a stock site | Check its licence note. Stock licences are per account, so flag external use. |
 | A character overlaps captions or cards | Give it a fixed home (lower left, on the path line) and keep content above it. Check every station's still. |
 | Scores plateau below 8 | Change the approach. After 2 flat rounds, show the blocking frame and ask. |
+| A catalog board pasted into a video plays its 12 s preview loop instead of landing on words | Rebuild it on `board-shell.html` with `data-move` + `data-cue`; catalog boards are references. |
+| An anchor lands nothing because Whisper misheard a name or number | Read the low-confidence words `transcribe_words.py` prints; fix the words TSV, never the script; re-sync. |
+| The 16 kHz `V/sync/voice.wav` ends up in the final | It is for timing only. The mix uses the original take at 48 kHz. |
+| A `.sticker` stretches into a tall line | Give it an explicit height and fill. |
+| Captions and a handwritten note collide bottom-left | Keep x60-1180, y930-1020 free with captions on; `check_board.mjs` flags collisions. |
+| The talking-head master is shorter than the board track | The camera take ended early; the export keeps the boards running (`eof_action=pass`) and the frame-count check catches any loss. |
+| Every board looks like the source repo's demo | The default theme shipped. Theme from the brand kit or run the style step (`tokens-default.md`). |
 
 ---
 

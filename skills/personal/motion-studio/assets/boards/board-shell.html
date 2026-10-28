@@ -1,0 +1,55 @@
+<!doctype html>
+<!-- board-shell.html: the starting point for every route-E board.
+     Copy it to V/boards/NN-name.html, keep the contract, replace the content.
+     Contract: one .ebs root (1920x1080, or 1080x1920 / 1080x1080 via data-format), every placed element absolute in
+     board pixels, every element that should land on a word has data-move + data-cue, cue-player.js loaded last.
+     Put motion on a wrapper, never on an element that carries its own transform. The values here are the
+     worked example from references/explainer/route-e.md ("it went from four seconds to forty"). -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Board shell</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&family=Instrument+Serif:ital@1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="brand.css">
+<!-- The video's theme goes over the defaults: V/assets/board-theme.css, made from the brand kit. -->
+<link rel="stylesheet" href="board-theme.css" onerror="this.remove()">
+<style>
+  html, body { margin: 0; background: #1a1a1a; }
+  .ebs .val { font: 700 64px/1 var(--space); }
+  .ebs .axis { font: 500 30px/1 var(--mono); color: var(--g2); }
+</style>
+</head>
+<body>
+<div class="ebs" data-format="16:9" data-camera="on">
+
+  <!-- Structure: on screen from frame 0 (no data-cue, no data-at). No board ever opens empty. -->
+  <div class="n eyebrow" style="left:60px;top:22px">RENDER TIME</div>
+  <div class="n title" style="left:60px;top:64px" data-move="title" data-cue="title"><span>Ten times slower</span></div>
+
+  <svg class="n" style="left:60px;top:220px" width="1120" height="560" viewBox="0 0 1120 560">
+    <line x1="160" y1="40" x2="160" y2="500" stroke="var(--line)" stroke-width="4"/>
+    <line x1="900" y1="40" x2="900" y2="500" stroke="var(--line)" stroke-width="4"/>
+    <!-- Content: each lands on the word that names it (cues from sync_cues.py). -->
+    <path data-move="draw" data-cue="slope" data-dur="1.2" d="M160 460 L900 80"
+          stroke="var(--indigo)" stroke-width="10" stroke-linecap="round" fill="none"/>
+  </svg>
+  <div class="n axis" style="left:150px;top:800px">BEFORE</div>
+  <div class="n axis" style="left:890px;top:800px">AFTER</div>
+
+  <div class="n val" style="left:60px;top:640px" data-move="pop" data-cue="v4">4 s</div>
+  <div class="n val" style="left:990px;top:270px" data-move="count" data-cue="v40" data-to="40" data-suffix=" s">0 s</div>
+  <!-- .sticker fills its box: always give it a height and a fill. -->
+  <div class="n sticker" style="left:1240px;top:240px;height:96px;background:var(--sticker)" data-move="stamp" data-cue="x10">10x</div>
+  <div class="n note" style="left:80px;top:920px" data-move="write" data-cue="note">per board, on a laptop</div>
+
+  <!-- Talking-head camera box. Hidden with data-camera="off" or ?camera=off for no-presenter videos. -->
+  <div class="camera" style="left:1400px;top:704px;width:480px;height:336px"></div>
+</div>
+
+<!-- Word-synced cue times. scripts/export_boards.mjs injects the real ones; these are the fallback for previews. -->
+<script>
+  window.CUES = window.CUES || { title: { t: 0.2 }, slope: { t: 1.0 }, v4: { t: 1.2 }, v40: { t: 2.6 }, x10: { t: 4.4 }, note: { t: 5.6 } };
+</script>
+<script src="cue-player.js"></script>
+</body>
+</html>
