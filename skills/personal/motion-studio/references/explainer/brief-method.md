@@ -38,7 +38,10 @@ original: "would a visual learner have an easy time?", "less is more, needs to b
      The line is unclear: script note.
 3. **Word scan.** Every term, acronym, number, name and unit: where it is first taught, whether a board must show
    it, and its plain-words meaning. This is the glossary; board labels match it exactly, every time.
-4. **Group into boards.** One board is one picture; it may build in steps. New picture, new board.
+4. **Group into boards.** One board is one picture; it may build in steps. New picture, new board. Name each
+   board's type from `board-types.md` (receipt, comparison bars, anchor diagram, flow, side by side, close read,
+   placeholder reveal, character scene, number sticker, evidence, hold) and collect exactly the inputs that type
+   needs; a missing input is a `[NEED]`, never a guess.
    - **The anchor:** most explainers have one backbone picture (a ladder, a map, a pipeline, at most two). Build it
      once early, then bring it back at the same position and scale with one part lit (others at 14 % opacity).
    - **Recurring actors** are introduced together on one board before they appear as chips.

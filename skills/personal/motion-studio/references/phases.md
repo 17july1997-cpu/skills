@@ -94,7 +94,7 @@ The annex section B question banks give worked examples per video type. Adapt th
 
 ## Phase 3: Route
 
-1. Check route E first: read `references/explainer/route-e.md` ("When route E wins"). If the film's job is to make an idea understood and most shots are diagrams, charts, numbers, lists or comparisons, route E wins (or joins a mixed route). Otherwise walk the "How the motion-studio skill picks" questions in `knowledge/framework-decision-matrix.md` against the brief. The first decisive answer wins.
+1. Check route E first: read `references/explainer/route-e.md` ("When route E wins"). If the film's job is to make an idea understood and most shots are diagrams, charts, numbers, lists or comparisons, route E wins (or joins a mixed route). If the film needs real 3D, read "When route F wins" in `references/3d/blender.md` (an object, logo or title) and "When route G wins" in `references/3d/unreal.md` (an environment or world), and run `bash SK/scripts/setup_3d_tools.sh --check` before recommending either. Otherwise walk the "How the motion-studio skill picks" questions in `knowledge/framework-decision-matrix.md` against the brief. The first decisive answer wins.
 2. Write the route, the reason, and the bootstrap commands into `V/brief.md` under "Route decision (and why)".
 3. Prefer routes marked "built in studio" or "smoke-tested". A "documented" route is installed now, inside `V/`, never globally, at the pinned version. A "not wired" route (mixed video-model) needs the user's budget and keys first: ask.
 4. **Mixed routes are normal.** For example: footage edit (D) with route-A animated inserts; Manim shots inside a route-A branded film.

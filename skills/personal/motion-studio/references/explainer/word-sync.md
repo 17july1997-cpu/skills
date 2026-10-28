@@ -37,7 +37,8 @@ Ported from board-sync's rules, each learned from a real review of a board video
 2. **Named things appear when they are named.** Landing = word start + 0.05 s. Never before the word, never more
    than ~2 s after. Anchors are searched in order, tolerating ad-libs between anchor words and number words vs
    digits ("forty" = 40, "five thousand dollars" = $5000).
-3. **A part never appears before its container.** Put the part's cue after its container's in the plan.
+3. **A part never appears before its container.** Give the part `"in": "<container cue>"` in the plan: it lands at
+   least 0.1 s after the box, and if its word comes first the box is pulled to just before it.
 4. **Money is not a count.** Stamps only on spoken money and percent; a count with a stamp is flagged.
 5. **Nothing static for more than `max_static`** (5 s default, the studio's "something new every 2-4 s" wants 3).
    Sync lists the gap and the presenter's own words heard in it as filler candidates; over 15 s means a new board.
@@ -71,6 +72,7 @@ Ported from board-sync's rules, each learned from a real review of a board video
 - `board` paths are relative to the output folder (`V/sync/`). `cue` matches `data-cue` on the board element.
 - `opens_on`: the words that start the board (voice). Boards run until the next board opens.
 - `text`: the on-screen words, used for the read-time check and for text-mode timing.
+- `in`: the cue of the container this element sits in (a row in its card, a label on its bar).
 - Text mode ignores `anchor` and `opens_on`; give `"hold"` (s) per board for a longer final hold.
 
 ## Commands (from the studio, `V=videos/<slug>`)

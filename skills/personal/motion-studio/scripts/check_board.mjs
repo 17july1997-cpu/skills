@@ -11,6 +11,7 @@
 //   margins   readable elements stay inside 60 px of every edge (arrows and the camera exempt)
 //   empty     something is on screen in the first frame
 //   collision two pieces of readable text overlap (captions included)
+//   overflow  text spills its sized box; counts: at most 5 stickers and 1 note; titles on one line
 // Writes V/qa/qa-report.md (every miss with board, time, element and the fix) and V/qa/sheets/NN.png (frames at each
 // landing) plus V/qa/sheets/NN-phone.png (the same at 360 px wide, the studio's phone readability check).
 // Exit 0 when clean, 1 when there are misses. Options: --min-px 28  --camera on|off  --size 1920x1080
@@ -73,11 +74,18 @@ const PROBE = () => {
     if (!own && !moving) return;
     const r = el.getBoundingClientRect();
     if (!r.width || !r.height) return;
-    const fs = parseFloat(getComputedStyle(el).fontSize);
+    const cs = getComputedStyle(el);
+    const fs = parseFloat(cs.fontSize);
     const scale = el.offsetHeight ? r.height / el.offsetHeight : 1;
+    // text spilling a box that has a set size (absolutely placed elements without one size to their text)
+    const spill = own && !inSvg && (el.scrollWidth > el.clientWidth + 2 || el.scrollHeight > el.clientHeight + 2)
+      && (el.style.width || el.style.height) !== '';
+    const lh = parseFloat(cs.lineHeight) || fs * 1.15;
     out.push({ id: el.dataset.cue || el.id || '', text: own ? el.textContent.trim().slice(0, 40) : '',
-               cls: inSvg ? 'svg' : el.closest('.cp-captions') ? 'captions' : String(el.className || ''),
-               x: r.left, y: r.top, r: r.right, b: r.bottom, px: own ? fs * scale : null, o: vis(el), moving });
+               cls: inSvg ? 'svg' : el.closest('.cp-captions') ? 'captions'
+                 : String(el.className || '') + (el.closest('.title') ? ' title' : ''),
+               x: r.left, y: r.top, r: r.right, b: r.bottom, px: own ? fs * scale : null, o: vis(el), moving,
+               spill, lines: own ? (cs.display === 'inline' ? el.getClientRects().length : Math.round(el.offsetHeight / lh)) : 0 });
   });
   const cam = document.querySelector('.camera');
   const camOn = cam && getComputedStyle(cam).display !== 'none';
@@ -117,8 +125,17 @@ for (const e of entries) {
     if (after && after.o < .9) miss(e.id, c.t, 'landing', id, `not landed 0.6 s after its word (${after.o.toFixed(2)})`, 'shorten the move or check data-out');
   }
 
-  // size, keep-out, margins on the fully built board
+  // size, keep-out, margins, overflow, counts on the fully built board (rules from qa-handoff.md / do-dont.md)
   const end = await at(Math.max(0, dur - 0.05));
+  const shown = end.els.filter(x => x.o >= .5);
+  const nStick = shown.filter(x => /\bsticker\b/.test(x.cls)).length;
+  const nNote = shown.filter(x => /\bnote\b/.test(x.cls)).length;
+  if (nStick > 5) miss(e.id, dur, 'stickers', '', `${nStick} stickers on screen`, 'at most 5 per board');
+  if (nNote > 1) miss(e.id, dur, 'notes', '', `${nNote} handwritten notes on screen`, 'one note per board');
+  for (const x of shown) {
+    if (x.spill) miss(e.id, dur, 'overflow', x.id || x.text, 'text spills its box', 'cut words or resize the box');
+    if (/\btitle\b/.test(x.cls) && x.lines > 1) miss(e.id, dur, 'title', x.id || x.text, `title on ${x.lines} lines`, 'one claim on one line: shorten it');
+  }
   for (const x of end.els) {
     if (x.o < .5) continue;
     const name = x.id || x.text;

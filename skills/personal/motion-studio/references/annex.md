@@ -292,6 +292,10 @@ Fixes: ...
 | A `.sticker` stretches into a tall line | Give it an explicit height and fill. |
 | Captions and a handwritten note collide bottom-left | Keep x60-1180, y930-1020 free with captions on; `check_board.mjs` flags collisions. |
 | The talking-head master is shorter than the board track | The camera take ended early; the export keeps the boards running (`eof_action=pass`) and the frame-count check catches any loss. |
+| A 3D route is chosen but the MCP tools are missing | `bash SK/scripts/setup_3d_tools.sh --check`, then `--blender` or `--unreal` after the user's OK; restart Claude Code. |
+| The Blender MCP server phones home | It sends an anonymous usage record by default; the setup script registers it with `DISABLE_TELEMETRY=true`. Keep it. |
+| Generated Blender code touches files or the network | Safe mode (`BLENDER_MCP_SAFE_MODE=1`, set by the setup script) blocks it; render from the command line instead. |
+| Unreal's first render is short or dark | `ue_render_sequence` is experimental: check `frame_count`, enable warm-up frames, fall back to the MRQ window. |
 | Every board looks like the source repo's demo | The default theme shipped. Theme from the brand kit or run the style step (`tokens-default.md`). |
 
 ---

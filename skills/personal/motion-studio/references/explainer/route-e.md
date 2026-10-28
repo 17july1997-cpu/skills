@@ -28,12 +28,12 @@ Not route E: a UI journey through real screens (route A or footage edit), pure b
 
 | Step | What | Read | Gate |
 |---|---|---|---|
-| E1 Brief | Line ledger, glossary, anchor, boards, builds with verbatim anchors | `brief-method.md` | Board list approved (replaces the shot-list OK) |
+| E1 Brief | Line ledger, glossary, anchor, boards, builds with verbatim anchors | `brief-method.md`, `board-types.md` | Board list approved (replaces the shot-list OK) |
 | E2 Theme | `V/boards/board-theme.css` from the brand kit, or the 3-direction style step | `tokens-default.md` | Part of the brief OK |
 | E3 Pick | One catalog board per picture, by its "say it when" tags | `board-catalog.md` | None |
-| E4 Build | Each board on `SK/assets/boards/board-shell.html` | `layout.md`, `components.md`, `charts.md`, `motion-recipes.md` | Stills + contact sheet |
+| E4 Build | Each board on `SK/assets/boards/board-shell.html` | `layout.md`, `components.md`, `charts.md`, `motion-recipes.md`, `do-dont.md` | Stills + contact sheet |
 | E5 Sync | Voice: transcribe, then sync. Words only: reading pace (+ beat snap) | `word-sync.md` | `sync-report.md` clean |
-| E6 QA | `check_board.mjs`, then the studio critique loop on a draft | `checks.md`, annex C | QA clean, every axis 8+ |
+| E6 QA | `check_board.mjs`, then the studio critique loop on a draft | `checks.md`, `do-dont.md`, annex C | QA clean, every axis 8+ |
 | E7 Render + sound | `export_boards.mjs` (`--first 60`, then full), studio mix | `word-sync.md` | Studio QA (LUFS, peak, frames) |
 | E8 Ship | Studio Phase 6, plus the extras below | | The user's verdict |
 

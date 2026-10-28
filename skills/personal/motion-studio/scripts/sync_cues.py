@@ -143,6 +143,21 @@ def captions_for(words, lo, hi, start):
     return out
 
 
+def contain(b, cues, flags):
+    """A part never appears before its container ("in": "<container cue>"): it lands >= 0.1 s after the box;
+    when the part's word comes first, the box is pulled to 0.1 s before the part (never before 0)."""
+    for bu in b.get("builds", []):
+        box = bu.get("in")
+        if not box or bu["cue"] not in cues: continue
+        if box not in cues:
+            flags.append(f"board {b['id']}: '{bu['cue']}' is in '{box}', which is not a cue on this board"); continue
+        part, cont = cues[bu["cue"]], cues[box]
+        if part["t"] < cont["t"] + 0.1:
+            cont["t"] = round(max(0.0, part["t"] - 0.1), 3)
+            if part["t"] < 0.1: part["t"] = round(cont["t"] + 0.1, 3)
+            cont["note"] = f"pulled before its part '{bu['cue']}'"
+
+
 def plan_voice(plan, words, flags, max_static, end_of_audio):
     boards = plan["boards"]
     # 1. Board windows: each board opens on its opens_on words, searched in order.
@@ -183,8 +198,9 @@ def plan_voice(plan, words, flags, max_static, end_of_audio):
                 want = tokens_of(bu["land_on"])
                 target = next((j for j in hit if want and same(words[j]["n"], want[0])), hit[0])
             t = words[target]["t"] - s + 0.05
-            if t <= last_t and any(c.get("word_idx") == target for c in cues.values()):
-                t = last_t + 0.1                       # several elements on one word land 0.1 s apart
+            siblings = [c["t"] for c in cues.values() if c.get("word_idx") == target]
+            if siblings:
+                t = max(siblings) + 0.1                    # several elements on one word land 0.1 s apart
             if bu.get("role") == "count" and bu.get("move") == "stamp":
                 flags.append(f"board {b['id']}: '{bu['cue']}' is a count but stamps; stamps are for money and percent only")
             cues[bu["cue"]] = {"t": round(t, 3), "anchor": bu["anchor"], "word": words[target]["w"], "word_idx": target}
@@ -204,6 +220,7 @@ def plan_voice(plan, words, flags, max_static, end_of_audio):
             if c and bu.get("text") and (e - s) - c["t"] < read_time(bu["text"]):
                 flags.append(f"board {b['id']}: '{bu['cue']}' is on screen {(e - s) - c['t']:.1f} s, needs "
                              f"{read_time(bu['text']):.1f} s to read; land it earlier or carry it onto the next board")
+        contain(b, cues, flags)
         for c in cues.values(): c.pop("word_idx", None)
         entry = {"id": b["id"], "board": b["board"], "start": round(s, 3), "end": round(e, 3), "cues": cues}
         if plan.get("captions"): entry["captions"] = captions_for(words, lo, hi, s)
@@ -229,6 +246,7 @@ def plan_text(plan, beats, flags):
             t = max(0.9, t + prev_read) if cues else 0.9
             cues[bu["cue"]] = {"t": round(t, 3), "word": "reading pace"}
             prev_read = max(0.6, read_time(bu.get("text", "")) if bu.get("text") else 0.8)
+        contain(b, cues, flags)
         length = max(3.0, t + prev_read + float(b.get("hold", 1.5)))
         if length > 5 and len([c for c in cues.values() if c["t"] > 0]) < 2:
             flags.append(f"board {b['id']}: {length:.1f} s with one landing; split it or add a build step")
