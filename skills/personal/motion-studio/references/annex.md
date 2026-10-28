@@ -289,6 +289,7 @@ Fixes: ...
 | A catalog board pasted into a video plays its 12 s preview loop instead of landing on words | Rebuild it on `board-shell.html` with `data-move` + `data-cue`; catalog boards are references. |
 | An anchor lands nothing because Whisper misheard a name or number | Read the low-confidence words `transcribe_words.py` prints; fix the words TSV, never the script; re-sync. |
 | The 16 kHz `V/sync/voice.wav` ends up in the final | It is for timing only. The mix uses the original take at 48 kHz. |
+| A footage tile shows the previous frame | The export waits for every video's `seeked` (1.5 s cap). Slow seeks: re-encode the tile all-intra (`ffmpeg -g 1`) or as an image sequence. |
 | A `.sticker` stretches into a tall line | Give it an explicit height and fill. |
 | Captions and a handwritten note collide bottom-left | Keep x60-1180, y930-1020 free with captions on; `check_board.mjs` flags collisions. |
 | The talking-head master is shorter than the board track | The camera take ended early; the export keeps the boards running (`eof_action=pass`) and the frame-count check catches any loss. |

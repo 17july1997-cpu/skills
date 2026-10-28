@@ -31,6 +31,8 @@ Newest at the bottom of each section. When a rule has held across three videos, 
 
 ## Motion
 - DO: every element lands on the word that names it, never before it, at most ~2 s after.
+- DON'T: cut to a board that shows only its label or title: structure or first content by 0.5 s. A 0.9 s blank at
+  every cut reads as a flicker across a film. (route-E evals: 4 of 6 proposal boards opened blank)
 - DON'T: zoom or slide the whole board like a camera; move the elements.
 - DON'T: move anything after it lands (no pulses, bobs, loops), except a stamp on its money word.
 - DO: one hero effect per board, not on everything.

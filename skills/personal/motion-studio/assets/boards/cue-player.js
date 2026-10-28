@@ -96,7 +96,8 @@
   function seek(t) {
     for (const x of els) {
       const t0 = timeOf(x), t1 = outOf(x);
-      const p = x.dur > 0 ? clamp((t - t0) / x.dur) : (t >= t0 ? 1 : 0);
+      // Structure cued at 0 is there as the board opens (no board opens on a blank frame); later cues animate in.
+      const p = t0 <= 0 ? 1 : x.dur > 0 ? clamp((t - t0) / x.dur) : (t >= t0 ? 1 : 0);
       const st = x.move.f(x.ease(p));
       const s = x.el.style;
       // Before its time an element does not exist on screen; a structure element (t0 = 0) is there at frame 0.

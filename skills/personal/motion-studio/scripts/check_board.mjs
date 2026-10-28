@@ -64,7 +64,7 @@ const PROBE = () => {
     }
     return o;
   };
-  const out = [];
+  const out = [], index = new Map();
   document.querySelectorAll('.ebs *').forEach(el => {
     if (el.closest('.camera')) return;
     const inSvg = !!el.closest('svg');
@@ -73,7 +73,7 @@ const PROBE = () => {
     const moving = el.hasAttribute('data-move');
     if (!own && !moving) return;
     const r = el.getBoundingClientRect();
-    if (!r.width || !r.height) return;
+    if (!r.width && !r.height) return;                       // a straight stroke has one zero side
     const cs = getComputedStyle(el);
     const fs = parseFloat(cs.fontSize);
     const scale = el.offsetHeight ? r.height / el.offsetHeight : 1;
@@ -81,7 +81,10 @@ const PROBE = () => {
     const spill = own && !inSvg && (el.scrollWidth > el.clientWidth + 2 || el.scrollHeight > el.clientHeight + 2)
       && (el.style.width || el.style.height) !== '';
     const lh = parseFloat(cs.lineHeight) || fs * 1.15;
-    out.push({ id: el.dataset.cue || el.id || '', text: own ? el.textContent.trim().slice(0, 40) : '',
+    const anc = [];
+    for (let p = el.parentElement; p; p = p.parentElement) if (index.has(p)) anc.push(index.get(p));
+    index.set(el, out.length);
+    out.push({ i: out.length, anc, id: el.dataset.cue || el.id || '', text: own ? el.textContent.trim().slice(0, 40) : '',
                cls: inSvg ? 'svg' : el.closest('.cp-captions') ? 'captions'
                  : String(el.className || '') + (el.closest('.title') ? ' title' : ''),
                x: r.left, y: r.top, r: r.right, b: r.bottom, px: own ? fs * scale : null, o: vis(el), moving,
@@ -110,10 +113,18 @@ for (const e of entries) {
   const dur = e.end !== undefined ? e.end - e.start : await page.evaluate(() => window.__dur || 8);
   const at = async t => { await page.evaluate(t => window.seek && window.seek(t), t); return page.evaluate(PROBE); };
 
-  // empty first frame
+  // empty open: something real on frame 0, and structure or content beyond labels and the title by 0.6 s (a board that shows
+  // only its eyebrow while the voice or music runs reads as a blank flash)
   const f0 = await at(0);
   if (!f0.els.some(x => x.o > .5)) miss(e.id, 0, 'empty', '', 'nothing readable on the first frame',
     'put the structure (eyebrow, axes, containers) on screen from frame 0');
+  const LABEL = /\b(eyebrow|kicker|credit|title)\b/;
+  const tOpen = Math.min(0.6, dur - 0.05);
+  const fOpen = await at(tOpen);
+  if (!fOpen.els.some(x => x.o > .3 && !LABEL.test(x.cls)) && !(await page.evaluate(() =>
+      [...document.querySelectorAll('.ebs svg [data-move], .ebs svg')].some(n => +getComputedStyle(n).opacity > .3 && n.getBBox && n.getBBox().width > 40))))
+    miss(e.id, tOpen, 'empty', '', `only labels and the title on screen at ${tOpen.toFixed(1)} s`,
+      'open with structure (containers, axes, the anchor) or land the first content by 0.5 s');
 
   // landing proof
   for (const [id, c] of Object.entries(cues)) {
@@ -159,6 +170,7 @@ for (const e of entries) {
       if (ix <= 4 || iy <= 4) continue;
       const inside = (u, v) => u.x >= v.x - 1 && u.y >= v.y - 1 && u.r <= v.r + 1 && u.b <= v.b + 1;
       if (inside(p, q) || inside(q, p)) continue;               // a label inside its card is fine
+      if (p.anc.includes(q.i) || q.anc.includes(p.i)) continue; // nested text is one piece of copy
       if (p.cls === 'captions' && q.cls === 'captions') continue;
       const key = `${e.id}|${[nm(p), nm(q)].sort().join('|')}`;
       if (misses.some(m => m.key === key)) continue;

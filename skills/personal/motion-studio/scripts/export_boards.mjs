@@ -40,6 +40,14 @@ const SEEK = `t => {
   document.querySelectorAll('video').forEach(v => { v.pause(); if (v.duration) v.currentTime = t % v.duration; });
 }`;
 
+// After a seek, a <video> shows its old frame until 'seeked' fires: wait for every video (1.5 s cap per frame),
+// or a footage tile can lag its board by a frame or more. Tiles that seek slowly should be all-intra encoded
+// (ffmpeg -g 1) or turned into image sequences first.
+const VIDEO_READY = `Promise.all([...document.querySelectorAll('video')].map(v =>
+  (!v.seeking && v.readyState >= 2) ? 0 : new Promise(r => {
+    const done = () => r(0); v.addEventListener('seeked', done, { once: true });
+    v.addEventListener('loadeddata', done, { once: true }); setTimeout(done, 1500); })))`;
+
 function args() {
   const a = { fps: 30, workers: 4, part: 20, seconds: 8, size: '1920x1080', camera: 'on', crf: 16 };
   const v = process.argv.slice(2);
@@ -103,6 +111,7 @@ async function renderPart(browser, a, entries, frames, idx, tmp) {
       cur = ei;
     }
     await page.evaluate(`(${SEEK})(${Math.max(0, t)})`);
+    await page.evaluate(VIDEO_READY);
     const buf = await page.screenshot({ type: 'png' });
     if (!ff.stdin.write(buf)) await new Promise(r => ff.stdin.once('drain', r));
   }

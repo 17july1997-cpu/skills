@@ -243,7 +243,7 @@ def plan_text(plan, beats, flags):
                 cues[bu["cue"]] = {"t": round(0.0 if bu.get("cue") == "title" else 0.45 + 0.12 * n_struct, 3), "anchor": None}
                 n_struct += 1
                 continue
-            t = max(0.9, t + prev_read) if cues else 0.9
+            t = max(0.5, t + prev_read) if cues else 0.5      # first content by 0.5 s: no blank flash at a cut
             cues[bu["cue"]] = {"t": round(t, 3), "word": "reading pace"}
             prev_read = max(0.6, read_time(bu.get("text", "")) if bu.get("text") else 0.8)
         contain(b, cues, flags)

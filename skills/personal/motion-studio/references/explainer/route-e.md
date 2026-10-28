@@ -58,7 +58,8 @@ Follow `tokens-default.md`: brand kit to `board-theme.css`, or the style step wi
    video: their timing is a preview loop and their copy is placeholder.
 3. The contract: one `.ebs` root; every placed element absolute in board pixels; each element that lands has
    `data-move` (pop, rise, card, stamp, fade, title, marker, write, draw, wipe, wipe-left, grow-x, grow-y, count,
-   dim, focus) and `data-cue` matching the plan; structure has neither and is there from frame 0. Motion on a
+   dim, focus) and `data-cue` matching the plan; structure has neither (or a cue at 0) and is there from frame 0.
+   `dim` and `focus` change an element that is already on screen; to make something appear, use a reveal move. Motion on a
    wrapper, never on an element with its own transform. Complex recipes go in `window.seekExtra(t, cueTime)`.
 4. Map recipes to moves: motion tokens M30 are built in (pop, rise, card, stamp, title + marker, write, draw).
    Premium and component recipes (P194-P237, C238-C254) are GSAP values: implement them in `seekExtra` as pure
